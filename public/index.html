@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    request:
+    <div id="request"></div>
+    response:
+    <div id="response"></div>
+    <script>
+      function fetchGraphQl(query, variables) {
+        return fetch("/graphql", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            query,
+            variables,
+          }),
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            return data;
+          });
+      }
+
+      var createMessageQuery = `mutation CreateMessage($input: MessageInput){
+          createMessage(input: $input){
+            id
+            content
+            author
+          }
+        }`;
+
+      // CreateMessage
+      fetchGraphQl(createMessageQuery, {
+        input: {
+          content: "message test",
+          author: "author123",
+        },
+      }).then((data) => {
+        const el = document.getElementById("request");
+        el.innerText = JSON.stringify(data);
+      });
+
+      // GetMessage
+      const getMessageQuery = `{
+          getMessages{
+            id
+            content
+            author
+          }
+        }`;
+
+      // CreateMessage
+      fetchGraphQl(getMessageQuery, {
+        input: {
+          content: "message test",
+          author: "author123",
+        },
+      }).then((data) => {
+        console.log("data returned:", data);
+        const el = document.getElementById("response");
+        el.innerText += JSON.stringify(data);
+      });
+    </script>
+  </body>
+</html>
